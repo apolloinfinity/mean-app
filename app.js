@@ -2,9 +2,8 @@ const path = require('path');
 
 const express = require('express');
 const cors = require('cors');
-const passport = require('passport');
-// const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const logger = require('morgan');
 
 const connectDB = require('./config/database.config');
 
@@ -21,21 +20,16 @@ app.use(cors());
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Body Parser
+app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: false }));
 
-// Passport
-app.use(passport.initialize());
-app.use(passport.session());
-
-require('./config/passport.config')(passport);
+app.use('/users', users);
 
 app.get('/', (req, res) => {
 	res.send('Invalid endpoint');
 });
 
-app.use('/users', users);
 app.listen(port, () => {
 	console.log(`Server started on port http://localhost:${port}`);
 });
