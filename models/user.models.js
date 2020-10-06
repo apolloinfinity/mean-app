@@ -1,5 +1,5 @@
 const { model, Schema } = require('mongoose');
-const { genSalt, hash } = require('bcryptjs');
+const bcrypt = require('bcryptjs');
 
 const UserSchema = new Schema({
 	name: {
@@ -21,22 +21,30 @@ const UserSchema = new Schema({
 
 const User = (module.exports = model('User', UserSchema));
 
-module.exports.getUserById = (id, cb) => {
-	User.findById(id, cb);
+module.exports.getUserById = (id) => {
+	User.findById(id);
 };
 
-module.exports.getUserByUsername = (username, cb) => {
-	const query = { username: username };
-	User.find(query, cb);
+module.exports.getUserByUsername = async (username) => {
+	const query = { username };
+	return await User.findOne(query);
 };
 
-module.exports.addUser = (newUser, cb) => {
-	let salt = 10;
-	genSalt(salt, (err, salt) => {
-		hash(newUser.password, salt, (err, hash) => {
-			if (err) throw err;
-			newUser.password = hash;
-			newUser.save(cb);
-		});
-	});
+module.exports.addUser = async (newUser) => {
+	try {
+		const user = new User(newUser);
+		const hash = await bcrypt.hash(newUser.password, 10);
+		user.password = hash;
+		return await user.save();
+	} catch (err) {
+		throw err;
+	}
+};
+
+module.exports.comparePassword = async (clientPassword, hashed) => {
+	try {
+		return await bcrypt.compare(clientPassword, hashed);
+	} catch (err) {
+		throw err;
+	}
 };
