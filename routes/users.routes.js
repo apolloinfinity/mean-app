@@ -1,34 +1,63 @@
 const { Router } = require('express');
 const router = Router();
-const passport = require('passport');
-const {} = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
+const secret = process.env.SECRET;
 
 const User = require('../models/user.models');
+const { authorize } = require('../middleware/auth.middleware');
 
-router.post('/register', (req, res, next) => {
-	console.log(req.body);
-	let newUser = new User({
-		name: req.body.name,
-		email: req.body.email,
-		username: req.body.username,
-		password: req.body.password
-	});
+router.post('/register', async (req, res, next) => {
+	try {
+		const { name, email, username, password } = await req.body;
 
-	User.addUser(newUser, (err, user) => {
-		if (err) {
-			res.json({ success: false, msg: 'Failed to register user' });
-		} else {
-			res.json({ sucess: true, msg: 'User registered' });
+		let newUser = new User({
+			name,
+			email,
+			username,
+			password
+		});
+
+		User.addUser(newUser);
+		res.json({ success: true, msg: 'User Created' });
+	} catch (err) {
+		res.status(500);
+	}
+});
+
+router.post('/authenticate', async (req, res, next) => {
+	try {
+		const { username, password } = await req.body;
+		const user = await User.getUserByUsername(username);
+		if (!user) {
+			res.status(400).json({ success: false, msg: 'User not found' });
 		}
-	});
+
+		const isMatch = await User.comparePassword(password, user.password);
+		if (!isMatch) {
+			res.status(400).json({ success: false, msg: 'Wrong Password' });
+		} else {
+			const token = jwt.sign({ data: user }, secret, {
+				expiresIn: 604800
+			});
+			res.json({
+				success: true,
+				token: token,
+				user: {
+					id: user._id,
+					name: user.name,
+					username: user.username,
+					email: user.email
+				}
+			});
+		}
+	} catch (err) {
+		res.status(400).json(err);
+	}
 });
 
-router.post('/authenticate', (req, res, next) => {
-	res.send('Authenticate');
-});
-
-router.get('/profile', (req, res, next) => {
-	res.send('profile');
+router.get('/profile', authorize, (req, res, next) => {
+	const user = req.user;
+	res.json({ user: user });
 });
 
 module.exports = router;
