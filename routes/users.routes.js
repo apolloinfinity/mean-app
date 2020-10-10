@@ -33,7 +33,8 @@ router.post('/authenticate', async (req, res, next) => {
 		}
 
 		const isMatch = await User.comparePassword(password, user.password);
-		if (!isMatch) {
+		console.log(isMatch)
+		if (isMatch === false) {
 			res.status(400).json({ success: false, msg: 'Wrong Password' });
 		} else {
 			const token = jwt.sign({ data: user }, secret, {
