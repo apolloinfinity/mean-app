@@ -9,13 +9,14 @@ import { AuthService } from '../../services/auth.service';
 	styleUrls: [ './profile.component.css' ]
 })
 export class ProfileComponent implements OnInit {
-	constructor(private auth: AuthService, private router: Router) {}
+	user: any;
 
-	user: Object;
+	constructor(private auth: AuthService, private router: Router) {}
 
 	ngOnInit(): void {
 		this.auth.getProfile().subscribe(
 			(profile) => {
+				console.log(profile);
 				this.user = profile.user;
 			},
 			(err) => {
