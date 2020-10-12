@@ -61,14 +61,14 @@ export class AuthService {
 	}
 
 	loggedIn() {
-		if (localStorage.id_token == undefined) {
-			console.log('Hello');
-			return true;
+		const helper = new JwtHelperService();
+		const isExpired = helper.isTokenExpired(localStorage.id_token);
+		if (localStorage.id_token === undefined) {
+			console.log('Is expired');
+			return false;
 		} else {
-			console.log('Goodbye');
-			const helper = new JwtHelperService();
-			console.log(helper.isTokenExpired(localStorage.id_token));
-			return helper.isTokenExpired(localStorage.id_token);
+			console.log('Is not expired');
+			return !isExpired;
 		}
 	}
 }
