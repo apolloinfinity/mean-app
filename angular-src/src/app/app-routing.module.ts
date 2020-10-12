@@ -17,7 +17,7 @@ const routes: Routes = [
 		component: RegisterComponent,
 		canActivate: [ LoggedInGuard ]
 	},
-	{ path: 'login', component: LoginComponent },
+	{ path: 'login', component: LoginComponent, canActivate: [ LoggedInGuard ] },
 	{ path: 'dashboard', component: DashboardComponent, canActivate: [ AuthGuard ] },
 	{ path: 'profile', component: ProfileComponent, canActivate: [ AuthGuard ] }
 ];

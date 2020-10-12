@@ -1012,7 +1012,7 @@ const routes = [
         component: _components_register_register_component__WEBPACK_IMPORTED_MODULE_6__["RegisterComponent"],
         canActivate: [_guards_logged_in_guard__WEBPACK_IMPORTED_MODULE_8__["LoggedInGuard"]]
     },
-    { path: 'login', component: _components_login_login_component__WEBPACK_IMPORTED_MODULE_4__["LoginComponent"] },
+    { path: 'login', component: _components_login_login_component__WEBPACK_IMPORTED_MODULE_4__["LoginComponent"], canActivate: [_guards_logged_in_guard__WEBPACK_IMPORTED_MODULE_8__["LoggedInGuard"]] },
     { path: 'dashboard', component: _components_dashboard_dashboard_component__WEBPACK_IMPORTED_MODULE_2__["DashboardComponent"], canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_7__["AuthGuard"]] },
     { path: 'profile', component: _components_profile_profile_component__WEBPACK_IMPORTED_MODULE_5__["ProfileComponent"], canActivate: [_guards_auth_guard__WEBPACK_IMPORTED_MODULE_7__["AuthGuard"]] }
 ];
